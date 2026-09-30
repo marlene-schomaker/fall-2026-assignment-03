@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Migrator, Migration, MigrationProvider, Kysely } from 'kysely';
+import { Kysely } from 'kysely';
+import { Migrator, Migration, MigrationProvider } from 'kysely/migration';
 import * as initialSchema from './migrations/001_initial_schema.js';
 import * as timeLogs from './migrations/002_time_logs.js';
 import { db } from './database.js';
@@ -9,7 +10,7 @@ dotenv.config();
 
 function isMigrationImplemented(migration: Migration): boolean {
   if (!migration.up) return false;
-  // Normalize function body to detect if it's still an empty stub
+
   const body = migration.up.toString().replace(/\s+/g, '');
   return (
     body !== 'asyncfunctionup(db){}' &&
@@ -24,7 +25,6 @@ export function createMigrator(database: Kysely<any> = db): Migrator {
         '001_initial_schema': initialSchema,
       };
 
-      // Automatically register 002_time_logs once student implements it
       if (isMigrationImplemented(timeLogs)) {
         migrations['002_time_logs'] = timeLogs;
       }
@@ -79,7 +79,6 @@ export async function migrateDown(database: Kysely<any> = db) {
   return results;
 }
 
-// Allow running directly via CLI
 if (process.argv[1]?.includes('migrator')) {
   const action = process.argv[2] || 'up';
   if (action === 'down') {

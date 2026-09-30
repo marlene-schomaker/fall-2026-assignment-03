@@ -53,3 +53,9 @@ export async function updateTicketStatus(
     .returningAll()
     .executeTakeFirst();
 }
+
+export async function getTickets(
+  options: GetAllTicketsOptions = {},
+): Promise<Ticket[]> {
+  return getAllTickets(options);
+}
